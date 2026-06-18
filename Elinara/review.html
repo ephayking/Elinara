@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Write a Review — Elinara Engineering Ltd</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus Jakarta Sans:wght@500;600;700;800&display=swap"/>
+<style>
+/* ── Tokens ─────────────────────────────────────────────────── */
+:root{
+  --navy:#0B1F4D;
+  --navy-deep:#071537;
+  --navy-light:#1a3170;
+  --gold:#D4AF37;
+  --gold-light:#E8C765;
+  --gold-deep:#A8862A;
+  --bg:#ffffff;
+  --muted:#6b7280;
+  --border:#e3e6ee;
+  --destructive:#dc2626;
+  --shadow-card:0 4px 20px -8px rgba(11,31,77,.12);
+  --shadow-gold:0 10px 30px -10px rgba(212,175,55,.5);
+  --gradient-gold:linear-gradient(135deg,#E8C765,#D4AF37 50%,#A8862A);
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:"Inter",system-ui,sans-serif;
+  color:var(--navy);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+h1,h2,h3,h4{
+  font-family:"Plus Jakarta Sans","Inter",sans-serif;
+  letter-spacing:-.02em;
+  line-height:1.1;
+  font-weight:700;
+  color:var(--navy);
+}
+button{font:inherit;cursor:pointer;}
+input,textarea{font:inherit;color:inherit;}
+a{color:inherit;text-decoration:none;}
+
+/* ── Full-page blurry background ────────────────────────────── */
+.page-bg{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  /* layered: dark navy gradient on top of the hero image */
+  background:
+    linear-gradient(135deg,rgba(7,21,55,.82) 0%,rgba(11,31,77,.70) 50%,rgba(26,49,112,.78) 100%),
+    url('assets/hero-engineer.jpg') center/cover no-repeat;
+  filter:blur(6px);
+  transform:scale(1.04); /* hide blur edge artifacts */
+}
+
+/* ── Scroll container ────────────────────────────────────────── */
+.page-scroll{
+  position:relative;
+  z-index:1;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start; /* top-align so long forms aren't cut */
+  padding:2rem 1rem 3rem;
+}
+
+/* ── Back link ───────────────────────────────────────────────── */
+.back-link{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  color:rgba(255,255,255,.8);
+  font-size:.875rem;
+  font-weight:500;
+  margin-bottom:1.75rem;
+  align-self:flex-start;
+  transition:color .15s;
+}
+.back-link:hover{color:#fff;}
+.back-link svg{width:1rem;height:1rem;}
+
+/* ── Card ────────────────────────────────────────────────────── */
+.review-card{
+  width:100%;
+  max-width:640px;
+  background:#fff;
+  border-radius:1.25rem;
+  box-shadow:0 32px 80px -16px rgba(11,31,77,.55);
+  overflow:hidden; /* clips the gold top strip */
+}
+
+/* Gold accent strip across the top */
+.review-card::before{
+  content:'';
+  display:block;
+  height:4px;
+  background:linear-gradient(90deg,#E8C765,#D4AF37 50%,#A8862A);
+}
+
+.card-inner{
+  padding:1.75rem 1.5rem 2rem;
+}
+@media(min-width:600px){.card-inner{padding:2.25rem 2.5rem 2.5rem;}}
+
+/* ── Card header ─────────────────────────────────────────────── */
+.card-header{
+  margin-bottom:1.75rem;
+  padding-bottom:1.25rem;
+  border-bottom:1px solid var(--border);
+}
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  font-size:.7rem;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold-deep);
+  margin-bottom:.5rem;
+}
+.card-header h1{
+  font-size:1.5rem;
+  color:var(--navy);
+  margin:0;
+}
+@media(min-width:600px){.card-header h1{font-size:1.75rem;}}
+
+/* ── Form grid ───────────────────────────────────────────────── */
+.review-grid{display:grid;gap:1.1rem;}
+@media(min-width:500px){.review-grid{grid-template-columns:1fr 1fr;gap:1.25rem;}}
+.review-grid .full{grid-column:1/-1;}
+
+label{
+  display:block;
+  font-size:.72rem;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+  color:var(--navy);
+  margin-bottom:.4rem;
+}
+label .req{color:var(--gold-deep);}
+
+input[type=text],textarea{
+  display:block;
+  width:100%;
+  border:1.5px solid var(--border);
+  border-radius:.5rem;
+  padding:.8rem 1rem;
+  font-size:1rem; /* 16px stops iOS zoom */
+  background:#fff;
+  transition:border-color .15s, box-shadow .15s;
+  outline:none;
+}
+input[type=text]:focus,textarea:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(212,175,55,.22);
+}
+textarea{resize:vertical;min-height:7rem;}
+
+.err{
+  margin-top:.35rem;
+  font-size:.75rem;
+  color:var(--destructive);
+  min-height:1rem;
+}
+
+/* ── Stars ───────────────────────────────────────────────────── */
+.star-row{display:flex;gap:.2rem;margin-top:.4rem;}
+.star-btn{
+  font-size:2.4rem;
+  color:#d1d5db;
+  background:none;
+  border:none;
+  padding:.1rem;
+  line-height:1;
+  cursor:pointer;
+  transition:color .1s, transform .1s;
+  -webkit-tap-highlight-color:transparent;
+}
+.star-btn:hover,.star-btn.lit{color:var(--gold);}
+.star-btn:hover{transform:scale(1.12);}
+@media(min-width:600px){.star-btn{font-size:2rem;}}
+
+/* ── Submit ──────────────────────────────────────────────────── */
+.review-submit{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.5rem;
+  width:100%;
+  padding:1rem 1.5rem;
+  margin-top:.5rem;
+  background:var(--navy);
+  color:#fff;
+  border:none;
+  border-radius:.625rem;
+  font-weight:700;
+  font-size:1rem;
+  cursor:pointer;
+  transition:background .2s var(--ease), box-shadow .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.review-submit:hover{
+  background:var(--navy-light);
+  box-shadow:0 8px 24px -8px rgba(11,31,77,.45);
+}
+.review-submit svg{width:1.1rem;height:1.1rem;flex-shrink:0;}
+
+/* ── Success state ───────────────────────────────────────────── */
+.success-screen{
+  display:none;
+  text-align:center;
+  padding:2.5rem 1rem;
+}
+.success-screen .tick{
+  font-size:3.5rem;
+  margin-bottom:1rem;
+}
+.success-screen h2{
+  font-size:1.5rem;
+  color:var(--navy);
+  margin-bottom:.75rem;
+}
+.success-screen p{
+  color:var(--muted);
+  font-size:.9375rem;
+  margin-bottom:1.75rem;
+  line-height:1.65;
+}
+.success-screen .go-back{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  padding:.875rem 2rem;
+  background:var(--navy);
+  color:#fff;
+  border-radius:.5rem;
+  font-weight:600;
+  font-size:.9375rem;
+  transition:background .2s;
+}
+.success-screen .go-back:hover{background:var(--navy-light);}
+
+/* ── Logo at bottom ──────────────────────────────────────────── */
+.page-footer{
+  margin-top:2rem;
+  color:rgba(255,255,255,.55);
+  font-size:.8125rem;
+  text-align:center;
+}
+.page-footer strong{color:rgba(255,255,255,.8);}
+</style>
+</head>
+<body>
+
+<!-- Blurry background layer -->
+<div class="page-bg" aria-hidden="true"></div>
+
+<!-- Scrollable page content -->
+<div class="page-scroll">
+
+  <!-- Back to site -->
+  <a href="index.html" class="back-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    Back to Elinara Engineering
+  </a>
+
+  <!-- Form card -->
+  <div class="review-card" id="review-card">
+    <div class="card-inner">
+
+      <!-- Header -->
+      <div class="card-header">
+        <p class="eyebrow">Share Your Experience</p>
+        <h1>Leave a Review</h1>
+      </div>
+
+      <!-- Form -->
+      <div id="form-view">
+        <div class="review-grid">
+
+          <div>
+            <label for="rv-name">Your Name <span class="req">*</span></label>
+            <input type="text" id="rv-name" placeholder="e.g. Engr. A. Okafor" autocomplete="name"/>
+            <div class="err" id="rv-err-name"></div>
+          </div>
+
+          <div>
+            <label for="rv-role">Your Role / Company</label>
+            <input type="text" id="rv-role" placeholder="e.g. Operations Manager"/>
+          </div>
+
+          <div class="full">
+            <label>Your Rating <span class="req">*</span></label>
+            <div class="star-row" id="star-row" role="group" aria-label="Star rating">
+              <button type="button" class="star-btn" data-val="1" aria-label="1 star">★</button>
+              <button type="button" class="star-btn" data-val="2" aria-label="2 stars">★</button>
+              <button type="button" class="star-btn" data-val="3" aria-label="3 stars">★</button>
+              <button type="button" class="star-btn" data-val="4" aria-label="4 stars">★</button>
+              <button type="button" class="star-btn" data-val="5" aria-label="5 stars">★</button>
+            </div>
+            <div class="err" id="rv-err-rating"></div>
+          </div>
+
+          <div class="full">
+            <label for="rv-msg">Your Review <span class="req">*</span></label>
+            <textarea id="rv-msg" rows="5" placeholder="Tell others about your experience with Elinara Engineering…"></textarea>
+            <div class="err" id="rv-err-msg"></div>
+          </div>
+
+          <div class="full">
+            <button type="button" class="review-submit" id="rv-submit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Submit Review
+            </button>
+          </div>
+
+        </div>
+      </div><!-- /form-view -->
+
+      <!-- Success screen (hidden until submit) -->
+      <div class="success-screen" id="success-screen">
+        <div class="tick">✓</div>
+        <h2>Thank you!</h2>
+        <p>Your review has been submitted and will appear on the testimonials carousel on our website.</p>
+        <a href="index.html#testimonials-section" class="go-back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:1rem;height:1rem"><polyline points="15 18 9 12 15 6"/></svg>
+          View Testimonials
+        </a>
+      </div>
+
+    </div><!-- /card-inner -->
+  </div><!-- /review-card -->
+
+  <p class="page-footer">© <strong>Elinara Engineering Ltd</strong> · All rights reserved</p>
+
+</div><!-- /page-scroll -->
+
+<script>
+(function(){
+  var STORAGE_KEY = 'elinara_reviews_v1';
+
+  function loadReviews(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch(e){ return []; } }
+  function saveReviews(arr){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }catch(e){} }
+
+  /* ── Star rating ── */
+  var selectedRating = 0;
+  var starBtns = Array.prototype.slice.call(document.querySelectorAll('.star-btn'));
+
+  function paintStars(val){
+    starBtns.forEach(function(b){
+      b.classList.toggle('lit', parseInt(b.dataset.val,10) <= val);
+    });
+  }
+
+  starBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      selectedRating = parseInt(btn.dataset.val,10);
+      paintStars(selectedRating);
+    });
+    btn.addEventListener('mouseenter', function(){ paintStars(parseInt(btn.dataset.val,10)); });
+    btn.addEventListener('mouseleave', function(){ paintStars(selectedRating); });
+  });
+
+  /* ── Submit ── */
+  document.getElementById('rv-submit').addEventListener('click', function(){
+    /* Clear errors */
+    ['rv-err-name','rv-err-rating','rv-err-msg'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.textContent = '';
+    });
+
+    var name    = (document.getElementById('rv-name').value||'').trim();
+    var role    = (document.getElementById('rv-role').value||'').trim();
+    var message = (document.getElementById('rv-msg').value||'').trim();
+    var ok = true;
+
+    if(!name){
+      document.getElementById('rv-err-name').textContent = 'Please enter your name.';
+      ok = false;
+    }
+    if(!selectedRating){
+      document.getElementById('rv-err-rating').textContent = 'Please pick a star rating.';
+      ok = false;
+    }
+    if(message.length < 10){
+      document.getElementById('rv-err-msg').textContent = 'Please write at least 10 characters.';
+      ok = false;
+    }
+    if(!ok) return;
+
+    /* Save to localStorage — index.html reads the same key */
+    var reviews = loadReviews();
+    reviews.push({ name:name, role:role, rating:selectedRating, message:message });
+    saveReviews(reviews);
+
+    /* Show success screen */
+    document.getElementById('form-view').style.display    = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+    window.scrollTo({ top:0, behavior:'smooth' });
+  });
+})();
+</script>
+</body>
+</html>
